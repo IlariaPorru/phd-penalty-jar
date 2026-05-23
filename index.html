@@ -49,6 +49,11 @@
   .log-time { font-size: 11px; color: #aaa; margin-left: auto; }
   .reset-row { margin-top: 12px; text-align: center; }
   .reset-btn { font-size: 12px; color: #aaa; background: none; border: none; cursor: pointer; text-decoration: underline; font-family: inherit; }
+  .confirm-box { margin-top: 10px; background: #fff3f3; border: 0.5px solid #f09595; border-radius: 8px; padding: 10px 14px; text-align: center; display: none; }
+  .confirm-box p { font-size: 13px; color: #791F1F; margin-bottom: 10px; }
+  .confirm-btns { display: flex; gap: 8px; justify-content: center; }
+  .confirm-yes { font-size: 12px; font-weight: 500; background: #E24B4A; color: white; border: none; border-radius: 6px; padding: 6px 16px; cursor: pointer; font-family: inherit; }
+  .confirm-no { font-size: 12px; font-weight: 500; background: #f0efe8; color: #1a1a1a; border: 0.5px solid #ccc; border-radius: 6px; padding: 6px 16px; cursor: pointer; font-family: inherit; }
   .empty-log { font-size: 13px; color: #aaa; font-style: italic; padding: 8px 0; }
 </style>
 </head>
@@ -102,7 +107,14 @@
   </div>
 
   <div class="reset-row">
-    <button class="reset-btn" onclick="resetJar()">Reset jar</button>
+    <button class="reset-btn" onclick="showConfirm()">Reset jar</button>
+    <div class="confirm-box" id="confirm-box">
+      <p>Are you sure? This will clear all entries.</p>
+      <div class="confirm-btns">
+        <button class="confirm-yes" onclick="doReset()">Yes, reset</button>
+        <button class="confirm-no" onclick="hideConfirm()">Cancel</button>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -123,6 +135,16 @@ function save(state) {
 
 var state = load();
 
+function showConfirm() { document.getElementById('confirm-box').style.display = 'block'; }
+function hideConfirm() { document.getElementById('confirm-box').style.display = 'none'; }
+
+function doReset() {
+  state = { ilaria: 0, natasha: 0, entries: [] };
+  save(state);
+  hideConfirm();
+  render();
+}
+
 function addDollar(who) {
   if (who === 'Ilaria') state.ilaria++;
   else state.natasha++;
@@ -131,13 +153,6 @@ function addDollar(who) {
              now.toLocaleTimeString('en-US', {hour:'2-digit', minute:'2-digit'});
   state.entries.unshift({ who: who, time: time });
   if (state.entries.length > 50) state.entries = state.entries.slice(0, 50);
-  save(state);
-  render();
-}
-
-function resetJar() {
-  if (!confirm('Reset the jar? This will clear all entries.')) return;
-  state = { ilaria: 0, natasha: 0, entries: [] };
   save(state);
   render();
 }
