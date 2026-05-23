@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Accountability Jar</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #f9f9f7;
+    color: #1a1a1a;
+    min-height: 100vh;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 2rem 1rem;
+  }
+  .page { width: 100%; max-width: 480px; display: flex; flex-direction: column; align-items: center; }
+  .title { font-size: 18px; font-weight: 500; margin-bottom: 4px; color: #1a1a1a; }
+  .subtitle { font-size: 13px; color: #888; margin-bottom: 1.5rem; }
+  .jar-wrap { position: relative; width: 220px; height: 300px; margin: 0 auto 1.5rem; }
+  .jar-wrap svg { width: 100%; height: 100%; }
+  .stats { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; width: 100%; margin-bottom: 1.5rem; }
+  .stat { background: #f0efe8; border-radius: 8px; padding: 12px 10px; text-align: center; }
+  .stat-label { font-size: 11px; color: #888; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.05em; }
+  .stat-val { font-size: 22px; font-weight: 500; }
+  .val-i { color: #534AB7; }
+  .val-n { color: #0F6E56; }
+  .val-t { color: #993C1D; }
+  .btns { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; margin-bottom: 1rem; }
+  .btn {
+    padding: 12px 0; font-size: 14px; font-weight: 500;
+    border-radius: 8px; border: 0.5px solid; cursor: pointer;
+    transition: opacity 0.15s, transform 0.1s;
+    font-family: inherit;
+  }
+  .btn-i { background: #EEEDFE; color: #3C3489; border-color: #AFA9EC; }
+  .btn-n { background: #E1F5EE; color: #085041; border-color: #5DCAA5; }
+  .btn:hover { opacity: 0.8; }
+  .btn:active { transform: scale(0.98); }
+  .log { width: 100%; }
+  .log-title { font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: #aaa; margin-bottom: 8px; }
+  .log-list { display: flex; flex-direction: column; gap: 6px; }
+  .log-item { display: flex; align-items: center; gap: 8px; font-size: 13px; color: #1a1a1a; padding: 7px 10px; background: #f0efe8; border-radius: 8px; }
+  .log-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .dot-i { background: #534AB7; }
+  .dot-n { background: #1D9E75; }
+  .log-time { font-size: 11px; color: #aaa; margin-left: auto; }
+  .reset-row { margin-top: 12px; text-align: center; }
+  .reset-btn { font-size: 12px; color: #aaa; background: none; border: none; cursor: pointer; text-decoration: underline; font-family: inherit; }
+  .empty-log { font-size: 13px; color: #aaa; font-style: italic; padding: 8px 0; }
+</style>
+</head>
+<body>
+<div class="page">
+  <p class="title">Accountability jar</p>
+  <p class="subtitle">Because accountability needs consequences. May this jar stay empty.</p>
+
+  <div class="jar-wrap">
+    <svg viewBox="0 0 220 300" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <clipPath id="jar-clip">
+          <path d="M38,80 Q30,85 28,100 L20,260 Q18,278 110,280 Q202,278 200,260 L192,100 Q190,85 182,80 Z"/>
+        </clipPath>
+      </defs>
+      <rect x="62" y="42" width="96" height="24" rx="6" fill="#D3D1C7" stroke="#B4B2A9" stroke-width="1"/>
+      <rect x="55" y="62" width="110" height="20" rx="4" fill="#B4B2A9" stroke="#888780" stroke-width="1"/>
+      <path d="M38,80 Q30,85 28,100 L20,260 Q18,278 110,280 Q202,278 200,260 L192,100 Q190,85 182,80 Z" fill="#E6F1FB" stroke="#85B7EB" stroke-width="1.5"/>
+      <rect id="fill-rect" x="20" y="280" width="180" height="0" clip-path="url(#jar-clip)" fill="#B5D4F4" opacity="0.7"/>
+      <g id="coins-layer" clip-path="url(#jar-clip)"></g>
+      <path d="M38,80 Q30,85 28,100 L20,260 Q18,278 110,280 Q202,278 200,260 L192,100 Q190,85 182,80 Z" fill="none" stroke="#85B7EB" stroke-width="2"/>
+      <ellipse cx="110" cy="80" rx="72" ry="10" fill="#D3D1C7" stroke="#B4B2A9" stroke-width="1"/>
+      <path d="M50,80 Q50,72 110,70 Q170,72 170,80" fill="none" stroke="#E6F1FB" stroke-width="3" opacity="0.6"/>
+      <text id="jar-label" x="110" y="185" text-anchor="middle" font-size="13" font-weight="500" fill="#185FA5" font-family="-apple-system, sans-serif">$0</text>
+    </svg>
+  </div>
+
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-label">Ilaria</div>
+      <div class="stat-val val-i" id="stat-i">$0</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">Total</div>
+      <div class="stat-val val-t" id="stat-total">$0</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">Natasha</div>
+      <div class="stat-val val-n" id="stat-n">$0</div>
+    </div>
+  </div>
+
+  <div class="btns">
+    <button class="btn btn-i" onclick="addDollar('Ilaria')">+ $1 — Ilaria</button>
+    <button class="btn btn-n" onclick="addDollar('Natasha')">+ $1 — Natasha</button>
+  </div>
+
+  <div class="log">
+    <div class="log-title">Log</div>
+    <div class="log-list" id="log-list"><div class="empty-log">No entries yet — stay accountable!</div></div>
+  </div>
+
+  <div class="reset-row">
+    <button class="reset-btn" onclick="resetJar()">Reset jar</button>
+  </div>
+</div>
+
+<script>
+var STORAGE_KEY = 'accountability-jar-v1';
+
+function load() {
+  try {
+    var raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) return JSON.parse(raw);
+  } catch(e) {}
+  return { ilaria: 0, natasha: 0, entries: [] };
+}
+
+function save(state) {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e) {}
+}
+
+var state = load();
+
+function addDollar(who) {
+  if (who === 'Ilaria') state.ilaria++;
+  else state.natasha++;
+  var now = new Date();
+  var time = now.toLocaleDateString('en-GB', {day:'2-digit',month:'short'}) + ' ' +
+             now.toLocaleTimeString('en-US', {hour:'2-digit', minute:'2-digit'});
+  state.entries.unshift({ who: who, time: time });
+  if (state.entries.length > 50) state.entries = state.entries.slice(0, 50);
+  save(state);
+  render();
+}
+
+function resetJar() {
+  if (!confirm('Reset the jar? This will clear all entries.')) return;
+  state = { ilaria: 0, natasha: 0, entries: [] };
+  save(state);
+  render();
+}
+
+function render() {
+  var total = state.ilaria + state.natasha;
+  document.getElementById('stat-i').textContent = '$' + state.ilaria;
+  document.getElementById('stat-n').textContent = '$' + state.natasha;
+  document.getElementById('stat-total').textContent = '$' + total;
+  document.getElementById('jar-label').textContent = '$' + total;
+
+  var JAR_TOP = 100, JAR_BOT = 270, JAR_MAX = 20;
+  var fillPct = Math.min(1, total / JAR_MAX);
+  var fillH = Math.round(fillPct * (JAR_BOT - JAR_TOP));
+  var fillY = JAR_BOT - fillH;
+  var rect = document.getElementById('fill-rect');
+  rect.setAttribute('y', fillY);
+  rect.setAttribute('height', fillH + 10);
+
+  var coinsLayer = document.getElementById('coins-layer');
+  coinsLayer.innerHTML = '';
+  state.entries.slice(0, 30).forEach(function(e, i) {
+    var row = Math.floor(i / 5);
+    var col = i % 5;
+    var cx = 52 + col * 26 + (row % 2) * 10;
+    var cy = JAR_BOT - 14 - row * 18;
+    var color = e.who === 'Ilaria' ? '#7F77DD' : '#1D9E75';
+    var stroke = e.who === 'Ilaria' ? '#534AB7' : '#0F6E56';
+    var el = document.createElementNS('http://www.w3.org/2000/svg', 'ellipse');
+    el.setAttribute('cx', cx); el.setAttribute('cy', cy);
+    el.setAttribute('rx', '11'); el.setAttribute('ry', '6');
+    el.setAttribute('fill', color); el.setAttribute('stroke', stroke);
+    el.setAttribute('stroke-width', '1');
+    coinsLayer.appendChild(el);
+    var txt = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    txt.setAttribute('x', cx); txt.setAttribute('y', cy + 4);
+    txt.setAttribute('text-anchor', 'middle'); txt.setAttribute('font-size', '8');
+    txt.setAttribute('fill', 'white'); txt.setAttribute('font-family', 'sans-serif');
+    txt.textContent = '$';
+    coinsLayer.appendChild(txt);
+  });
+
+  var logList = document.getElementById('log-list');
+  if (state.entries.length === 0) {
+    logList.innerHTML = '<div class="empty-log">No entries yet — stay accountable!</div>';
+    return;
+  }
+  logList.innerHTML = state.entries.slice(0, 20).map(function(e) {
+    var isI = e.who === 'Ilaria';
+    return '<div class="log-item"><span class="log-dot ' + (isI ? 'dot-i' : 'dot-n') + '"></span>' +
+      e.who + ' owes $1<span class="log-time">' + e.time + '</span></div>';
+  }).join('');
+}
+
+render();
+</script>
+</body>
+</html>
